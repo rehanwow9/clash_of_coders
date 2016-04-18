@@ -21,7 +21,7 @@ namespace PasswordChecker
                 }
                 else if (inputPassword.Length > 16)
                 {
-                    Console.WriteLine("Password Legnth greater than 16!");
+                    Console.WriteLine("Password Length greater than 16!");
                 }
                 else
                 {
@@ -38,8 +38,7 @@ namespace PasswordChecker
         private static string GetStrongness(string inputPassword)
         {
             var specialCharString = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~ ";
-            int consecutiveChars = 0;
-            bool twoConsecutive = false;
+           
             bool threeConsecutive = false;
             bool fourConsecutive = false;
             int numSpecialChars = 0;
@@ -64,7 +63,6 @@ namespace PasswordChecker
                 {
                     if (char.IsDigit(previousChar))
                     {
-                        twoConsecutive = true;
                         if (char.IsDigit(twoPreviousChar))
                         {
                             threeConsecutive = true;
@@ -77,11 +75,10 @@ namespace PasswordChecker
                     }
                     numDigits++;
                 }
-                if (IsLower(inputChar))
+                if (char.IsLower(inputChar))
                 {
                     if (char.IsLower(previousChar))
                     {
-                        twoConsecutive = true;
                         if (char.IsLower(twoPreviousChar))
                         {
                             threeConsecutive = true;
@@ -94,11 +91,10 @@ namespace PasswordChecker
                     }
                     numSmall++;
                 }
-                if (IsUpper(inputChar))
+                if (char.IsUpper(inputChar))
                 {
                     if (char.IsUpper(previousChar))
                     {
-                        twoConsecutive = true;
                         if (char.IsUpper(twoPreviousChar))
                         {
                             threeConsecutive = true;
@@ -117,22 +113,10 @@ namespace PasswordChecker
 
             }
 
-            return GetStrongness(inputPassword.Length, twoConsecutive, threeConsecutive, fourConsecutive, numSpecialChars, numCapitals, numSmall, numDigits);
-            throw new NotImplementedException();
+            return GetStrongness(inputPassword.Length, threeConsecutive, fourConsecutive, numSpecialChars, numCapitals, numSmall, numDigits);
         }
 
-        private static bool IsUpper(char inputChar)
-        {
-            return (char.IsLetter(inputChar)) && inputChar.ToString().ToUpper() == inputChar.ToString();
-        
-        }
-
-        private static bool IsLower(char inputChar)
-        {
-            return (char.IsLetter(inputChar)) && inputChar.ToString().ToLower() == inputChar.ToString();
-        }
-
-        private static string GetStrongness(int passLength, bool twoConsecutive, bool threeConsecutive, bool fourConsecutive, int numSpecialChars, int numCapitals, int numSmall, int numDigits)
+        private static string GetStrongness(int passLength, bool threeConsecutive, bool fourConsecutive, int numSpecialChars, int numCapitals, int numSmall, int numDigits)
         {
             String result = "INVALID";
             if (numDigits > 0 && numSmall > 0 && numCapitals > 0 && numSpecialChars > 0 && passLength >= 8)
@@ -149,7 +133,6 @@ namespace PasswordChecker
             {
                 result = "STRONG";
             }
-            
             
             return result;
         }
@@ -200,13 +183,20 @@ namespace PasswordChecker
             return resultDictionary;
         }
 
+
+        /// <summary>
+        /// Hash funtion to store the passwords in bucket.
+        /// Adding the ascii value of each char of the string and taking reminder 200
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
         private static int GetHashKey(string str)
         {
             int stringValue = 0;
             foreach (var c in str)
                 stringValue += (int)c;
 
-            return stringValue % 200;
+            return stringValue % 666;
         }
     }
 }
