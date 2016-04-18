@@ -162,10 +162,10 @@ namespace PasswordChecker
         /// <returns></returns>
         private static bool PasswordInDictionary(string inputPassword, Dictionary<int, List<string>> passwordDictionary)
         {
-            var inputLength = inputPassword.Length;
-            if (passwordDictionary.Keys.Contains(inputLength))
+            var key = GetHashKey(inputPassword);
+            if (passwordDictionary.Keys.Contains(key))
             {
-                if (passwordDictionary[inputLength].Contains(inputPassword))
+                if (passwordDictionary[key].Contains(inputPassword))
                     return true;
             }
             return false;
@@ -185,19 +185,28 @@ namespace PasswordChecker
                 var pass = sr.ReadLine();
                 while (!String.IsNullOrWhiteSpace(pass))
                 {
-                    var passLength = pass.Length;
-                    if (resultDictionary.Keys.Contains(passLength))
+                    var key = GetHashKey(pass);
+                    if (resultDictionary.Keys.Contains(key))
                     {
-                        resultDictionary[passLength].Add(pass);
+                        resultDictionary[key].Add(pass);
                     }
                     else
                     {
-                        resultDictionary[passLength] = new List<string> { pass };
+                        resultDictionary[key] = new List<string> { pass };
                     }
                     pass = sr.ReadLine();
                 }
             }
             return resultDictionary;
+        }
+
+        private static int GetHashKey(string str)
+        {
+            int stringValue = 0;
+            foreach (var c in str)
+                stringValue += (int)c;
+
+            return stringValue % 200;
         }
     }
 }
